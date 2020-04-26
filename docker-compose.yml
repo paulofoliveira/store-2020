@@ -1,0 +1,62 @@
+version: '3.4'
+
+services:
+  accountservice:
+    image: ${DOCKER_REGISTRY-}accountservice
+    build:
+      context: .
+      dockerfile: Services/AccountService/Dockerfile
+    ports:
+    - "5001:5001"
+    networks:
+      store2020network:
+        ipv4_address: 172.19.10.101
+
+  inventoryservice:
+    image: ${DOCKER_REGISTRY-}inventoryservice
+    build:
+      context: .
+      dockerfile: Services/InventoryService/Dockerfile
+    ports:
+    - "5002:5002"
+    networks:
+      store2020network:
+        ipv4_address: 172.19.10.102
+
+  shoppingcartservice:
+    image: ${DOCKER_REGISTRY-}shoppingcartservice
+    build:
+      context: .
+      dockerfile: Services/ShoppingCartService/Dockerfile
+    ports:
+    - "5003:5003"
+    networks:
+      store2020network:
+        ipv4_address: 172.19.10.103
+
+  store2020:
+    image: ${DOCKER_REGISTRY-}store2020
+    depends_on:
+    - accountservice
+    - inventoryservice
+    - shoppingcartservice
+    environment:
+      ACCOUNT_SERVICE_API_BASE: http://172.19.10.101/api
+      INVENTORY_SERVICE_API_BASE: http://172.19.10.102/api
+      SHOPPING_SERVICE_API_BASE: http://172.19.10.103/api
+    build:
+      context: .
+      dockerfile: Store2020/Dockerfile
+    ports:
+    - "5000:5000"
+    networks:
+      store2020network:
+        ipv4_address: 172.19.10.100
+
+networks:
+  store2020network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.19.0.0/16

@@ -1,0 +1,20 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+WORKDIR /app
+ENV ASPNETCORE_URLS http://+:5000
+EXPOSE 5000
+
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+WORKDIR /src
+COPY ["Store2020/Store2020.csproj", "Store2020/"]
+RUN dotnet restore "Store2020/Store2020.csproj"
+COPY . .
+WORKDIR "/src/Store2020"
+RUN dotnet build "Store2020.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "Store2020.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Store2020.dll"]

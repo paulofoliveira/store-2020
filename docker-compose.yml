@@ -41,9 +41,9 @@ services:
     - inventoryservice
     - shoppingcartservice
     environment:
-      ACCOUNT_SERVICE_API_BASE: http://172.19.10.101/api
-      INVENTORY_SERVICE_API_BASE: http://172.19.10.102/api
-      SHOPPING_SERVICE_API_BASE: http://172.19.10.103/api
+      ACCOUNT_SERVICE_API_BASE: http://172.19.10.101:5001/api
+      INVENTORY_SERVICE_API_BASE: http://172.19.10.102:5002/api
+      SHOPPING_SERVICE_API_BASE: http://172.19.10.103:5003/api
     build:
       context: .
       dockerfile: Store2020/Dockerfile

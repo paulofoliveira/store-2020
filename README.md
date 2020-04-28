@@ -5,7 +5,7 @@ Contains tree Backend APIs with ASP.NET Core 3.1 (AccountService, InventoryServi
 
 Until Course One, I saw about Refactor and Redesign one monolith application in Microservices, use Swagger to documentation and containers with Docker Compose to build a complete solution with code hosted on Github.
 
-# Techonologies envolved
+# Technologies envolved
 
 - ASP.NET Core 3.1 with Restful APIs and MVC
 - Swagger to documentation

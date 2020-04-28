@@ -15,6 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Store2020", "Store2020\Stor
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{75FD1B40-E830-43A4-9E24-A12D25FBAEBF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildScripts", "BuildScripts", "{DEBB6D0D-F828-4AB4-81FD-B7DF6FBC57F9}"
+	ProjectSection(SolutionItems) = preProject
+		BuildScripts\Dockerfile = BuildScripts\Dockerfile
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

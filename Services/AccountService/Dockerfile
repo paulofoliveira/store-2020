@@ -1,19 +1,22 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
-ENV ASPNETCORE_URLS http://+:5001
-EXPOSE 5001
+FROM solucaoi9/microservicebase:latest as base
+COPY nginx.conf /etc/nginx/sites-available/default
+
+WORKDIR /app
+ENV ASPNETCORE_URLS http://+:8081
+EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
-WORKDIR /src
-COPY ["Services/AccountService/AccountService.csproj", "Services/AccountService/"]
-RUN dotnet restore "Services/AccountService/AccountService.csproj"
+WORKDIR "/src/"
+COPY "./AccountService.csproj" .
+RUN dotnet restore
 COPY . .
-WORKDIR "/src/Services/AccountService"
-RUN dotnet build "AccountService.csproj" -c Release -o /app/build
+RUN dotnet build -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "AccountService.csproj" -c Release -o /app/publish
+RUN dotnet publish -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "AccountService.dll"]
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ENTRYPOINT ["/usr/bin/supervisord"]

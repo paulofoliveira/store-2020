@@ -2,53 +2,53 @@ version: '3.4'
 
 services:
   accountservice:
-    image: ${DOCKER_REGISTRY-}accountservice
+    image: solucaoi9/accountservice
     build:
-      context: .
-      dockerfile: Services/AccountService/Dockerfile
+      context: ./Services/AccountService
+      dockerfile: Dockerfile
     ports:
-    - "5001:5001"
+    - "8081:80"
     networks:
       store2020network:
         ipv4_address: 172.19.10.101
 
   inventoryservice:
-    image: ${DOCKER_REGISTRY-}inventoryservice
+    image: solucaoi9/inventoryservice
     build:
-      context: .
-      dockerfile: Services/InventoryService/Dockerfile
+      context: ./Services/InventoryService
+      dockerfile: Dockerfile
     ports:
-    - "5002:5002"
+    - "8082:80"
     networks:
       store2020network:
         ipv4_address: 172.19.10.102
 
   shoppingcartservice:
-    image: ${DOCKER_REGISTRY-}shoppingcartservice
+    image: solucaoi9/shoppingcartservice
     build:
-      context: .
-      dockerfile: Services/ShoppingCartService/Dockerfile
+      context: ./Services/ShoppingCartService
+      dockerfile: Dockerfile
     ports:
-    - "5003:5003"
+    - "8083:80"
     networks:
       store2020network:
         ipv4_address: 172.19.10.103
 
   store2020:
-    image: ${DOCKER_REGISTRY-}store2020
+    image: solucaoi9/store2020
     depends_on:
     - accountservice
     - inventoryservice
     - shoppingcartservice
     environment:
-      ACCOUNT_SERVICE_API_BASE: http://172.19.10.101:5001/api
-      INVENTORY_SERVICE_API_BASE: http://172.19.10.102:5002/api
-      SHOPPING_SERVICE_API_BASE: http://172.19.10.103:5003/api
+      ACCOUNT_SERVICE_API_BASE: http://172.19.10.101/api
+      INVENTORY_SERVICE_API_BASE: http://172.19.10.102/api
+      SHOPPING_SERVICE_API_BASE: http://172.19.10.103/api
     build:
-      context: .
-      dockerfile: Store2020/Dockerfile
+      context: ./Store2020
+      dockerfile: Dockerfile
     ports:
-    - "5000:5000"
+    - "8000:80"
     networks:
       store2020network:
         ipv4_address: 172.19.10.100

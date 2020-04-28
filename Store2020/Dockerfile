@@ -1,20 +1,22 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM solucaoi9/microservicebase:latest as base
+COPY nginx.conf /etc/nginx/sites-available/default
+
 WORKDIR /app
-ENV ASPNETCORE_URLS http://+:5000
-EXPOSE 5000
+ENV ASPNETCORE_URLS http://+:8000
+EXPOSE 8000
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["Store2020/Store2020.csproj", "Store2020/"]
-RUN dotnet restore "Store2020/Store2020.csproj"
+COPY "Store2020.csproj" .
+RUN dotnet restore
 COPY . .
-WORKDIR "/src/Store2020"
-RUN dotnet build "Store2020.csproj" -c Release -o /app/build
+RUN dotnet build -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Store2020.csproj" -c Release -o /app/publish
+RUN dotnet publish -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Store2020.dll"]
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ENTRYPOINT ["/usr/bin/supervisord"]

@@ -1,20 +1,22 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM solucaoi9/microservicebase:latest as base
+COPY nginx.conf /etc/nginx/sites-available/default
+
 WORKDIR /app
-ENV ASPNETCORE_URLS http://+:5003
-EXPOSE 5003
+ENV ASPNETCORE_URLS http://+:8083
+EXPOSE 8083
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["Services/ShoppingCartService/ShoppingCartService.csproj", "Services/ShoppingCartService/"]
-RUN dotnet restore "Services/ShoppingCartService/ShoppingCartService.csproj"
+COPY "ShoppingCartService.csproj" .
+RUN dotnet restore
 COPY . .
-WORKDIR "/src/Services/ShoppingCartService"
-RUN dotnet build "ShoppingCartService.csproj" -c Release -o /app/build
+RUN dotnet build -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "ShoppingCartService.csproj" -c Release -o /app/publish
+RUN dotnet publish -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ShoppingCartService.dll"]
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+ENTRYPOINT ["/usr/bin/supervisord"]
